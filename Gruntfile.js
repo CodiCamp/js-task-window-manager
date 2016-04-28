@@ -1,5 +1,3 @@
-
-
 module.exports = function (grunt) {
 
     grunt.file.defaultEncoding = 'utf-8';
