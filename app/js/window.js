@@ -3,63 +3,70 @@
  * @param  {Object} GLOBAL
  * @return {Void}
  */
-(function (GLOBAL) {
+var app = require('app'),
+    template = require('template-window'),
+    Events = require('events');
+
     
-    GLOBAL.UiWindow = {
+module.exports =  {
         
-        init: function (uiWindowID) {
-            this.uid = uiWindowID;
+    init (uiWindowID) {
+        this.uid = uiWindowID;
 
-            console.info('Window inited -> ', this.uid);
-            
-            this.render();
-            this.attachEvents();
-        },
-        
-        elements: {},
+        console.info('Window inited -> ', this.uid);
 
-        getElements: function () {
-        },
+        this.render();
+        this.attachEvents();
+    },
 
-        attachEvents: function () {
+    elements: {},
 
-            this.destroy = this.destroy.bind(this);
+    getElements () {
 
-            Events.subscribe(this.elements.closeButton, 'click', this.destroy)
-        },
+        this.elements.closeButton = this.elements.root.querySelector('.close-button');
+    },
 
-        detachEvents: function () {
+    attachEvents () {
 
-            Events.unsubscribe(this.elements.closeButton, 'click', this.destroy);
-        },
+        this.destroy = this.destroy.bind(this);
 
-        render: function () {
-            this.elements.root = document.createElement('div');
-            this.elements.root.innerHTML = '<a href="javascript:;" class="close-button">X</a><div>' + this.uid + '</div>';
+        Events.subscribe(this.elements.closeButton, 'click', this.destroy)
+    },
 
-            controller.elements.windowsPlaceholder.appendChild(this.elements.root);
-            this.elements.closeButton = this.elements.root.querySelector('.close-button')
-        },
+    detachEvents () {
 
-        destroy: function () {
+        Events.unsubscribe(this.elements.closeButton, 'click', this.destroy);
+    },
 
-            this.detachEvents();
-            controller.elements.windowsPlaceholder.removeChild(this.elements.root);
+    render () {
+        this.elements.root = document.createElement('div');
+        this.elements.root.innerHTML = template.replace('{{uid}}', this.uid);
 
-            Events.publish(window, 'window-removed-' + this.uid);
-            Events.publish(window, 'window-removed', {
-                uid: this.uid
-            });
-        },
+        app.controller.elements.windowsPlaceholder.appendChild(this.elements.root);
+        this.getElements();
+    },
 
-        minimize: function () {
-        },
+    destroy () {
 
-        maximize: function () {
-        },
+        this.detachEvents();
+        app.controller.elements.windowsPlaceholder.removeChild(this.elements.root);
 
-        resize: function () {
-        }
-    };
+        Events.publish(window, 'window-removed-' + this.uid);
+        Events.publish(window, 'window-removed', {
+            uid: this.uid
+        });
+    },
 
-})(window);
+    minimize () {
+    },
+
+    maximize () {
+    },
+
+    resize () {
+    },
+
+    dragg () {
+
+    }
+};

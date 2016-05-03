@@ -39,7 +39,7 @@ module.exports = function (grunt) {
             development: {
 
                 files: [      
-                    {expand: true, cwd: 'app/js', src: ['**'], dest: 'build/js'},
+                    // {expand: true, cwd: 'app/js', src: ['**'], dest: 'build/js'},
                     {expand: true, cwd: 'app/templates', src: ['**'], dest: 'build/templates'},
                 ]
             },
@@ -51,12 +51,12 @@ module.exports = function (grunt) {
                 ]
             },
 
-            js: {
-
-                files: [      
-                    {expand: true, cwd: 'app/js', src: ['**'], dest: 'build/js'},
-                ]
-            },
+            // js: {
+            //
+            //     files: [
+            //         {expand: true, cwd: 'app/js', src: ['**'], dest: 'build/js'},
+            //     ]
+            // },
 
             templates: {
                 
@@ -110,7 +110,7 @@ module.exports = function (grunt) {
                     livereload: true
                 },
                 files: ["app/js/**/*.js"],
-                tasks: ["copy:js"]
+                tasks: ["browserify:development"]
             },
 
             templates: {
@@ -143,15 +143,60 @@ module.exports = function (grunt) {
             }
         },
 
-        uglify: {
-            options: {
-                mangle: false
-            },
+        // uglify: {
+        //     options: {
+        //         mangle: false
+        //     },
+        //
+        //     production: {
+        //
+        //         files:  {
+        //             'production/js/main.min.js': ['app/js/**/*.js']
+        //         }
+        //     }
+        // },
 
+        browserify: {
+
+            development: {
+
+                files: {
+                    'build/js/app.js': ['app/js/main.js']
+                },
+
+                options: {
+
+                    browserifyOptions: {
+                        debug: true
+                    },
+                    
+                    transform: [
+                        ["babelify", {"presets": ["es2015"]}],
+                        ["stringify", {
+                            appliesTo: { includeExtensions: ['.html'] }
+                        }]
+                    ],
+
+                    alias: {
+                        'app': './app/js/app.js',
+                        'events': './app/js/events.js',
+                        'template-window': './app/templates/window-template.html'
+                    }
+                }
+            },
             production: {
-                
-                files:  {
-                    'production/js/main.min.js': ['app/js/**/*.js']
+
+                files: {
+                    'production/js/main.min.js': ['app/js/main.js']
+                },
+
+                options: {
+                    transform: [
+                        ["babelify", {"presets": ["es2015"]}],
+                        ["stringify", {
+                            appliesTo: { includeExtensions: ['.html'] }
+                        }]
+                    ]
                 }
             }
         },
@@ -191,6 +236,7 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -200,6 +246,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-html-build');
 
-    grunt.registerTask("default", ["clean:development", "htmlbuild:development", "less:development", "copy:development", "connect", "watch"]);
-    grunt.registerTask("production", ["clean:production", "htmlbuild:production", "less:production", "cssmin:production", "uglify:production", "copy:production"]);
+    grunt.registerTask("default", ["clean:development", "htmlbuild:development", "less:development", "browserify:development", "copy:development", "connect", "watch"]);
+    grunt.registerTask("production", ["clean:production", "htmlbuild:production", "less:production", "cssmin:production", "browserify:production", "copy:production"]);
 };
