@@ -9,8 +9,9 @@ var app = require('app'),
 
     
 module.exports =  {
-        
+
     init (uiWindowID) {
+
         this.uid = uiWindowID;
 
         console.info('Window inited -> ', this.uid);
@@ -19,7 +20,7 @@ module.exports =  {
         this.attachEvents();
     },
 
-    elements: {},
+    type: 'uiWindow',
 
     getElements () {
 
@@ -39,6 +40,7 @@ module.exports =  {
     },
 
     render () {
+        this.elements = {};
         this.elements.root = document.createElement('div');
         this.elements.root.innerHTML = template.replace('{{uid}}', this.uid);
 

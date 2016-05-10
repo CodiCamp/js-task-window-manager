@@ -83,3 +83,6 @@ var app = require("app"),
     };
 
     app.controller.init();
+
+window.app = app;
+window.UiWindow = UiWindow;

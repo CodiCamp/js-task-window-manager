@@ -14,12 +14,12 @@ module.exports = {
         this.attachEvents();
     },
 
-    elements: {},
-
     /**
      * Render dom markup in to the status Bar
      */
     render () {
+
+        this.elements = {};
         this.elements.root = document.createElement('a');
         this.elements.root.href = 'javascript:;';
         this.elements.root.innerText = 'window ' + this.uid;
